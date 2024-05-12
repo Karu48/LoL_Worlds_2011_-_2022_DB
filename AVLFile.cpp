@@ -75,6 +75,16 @@ public:
         return records;
     }
 
+    AVLNode<TK>* getRoot() {
+        return root;
+    }
+
+    vector<Record<TK>> rangeSearch(TK low, TK high) {
+        vector<Record<TK>> result;
+        rangeSearchHelper(root, low, high, result);
+        return result;
+    }
+
 private:
     AVLNode<TK>* findNode(AVLNode<TK>* node, TK key) {
         if (node == nullptr)
@@ -236,6 +246,20 @@ private:
         inorderTraversal(node->right, records);
     }
 
+    void rangeSearchHelper(AVLNode<TK>* node, TK low, TK high, vector<Record<TK>>& result) {
+        if (node == nullptr)
+            return;
+
+        if (node->record.id > low)
+            rangeSearchHelper(node->left, low, high, result);
+
+        if (node->record.id >= low && node->record.id <= high)
+            result.push_back(node->record);
+
+        if (node->record.id < high)
+            rangeSearchHelper(node->right, low, high, result);
+    }
+
     void writeNode(AVLNode<TK>* node, long& pos) {
         ofstream file(filename, ios::binary | ios::trunc);
         if (!file.is_open()) {
@@ -282,9 +306,15 @@ int main() {
     }
 
     avlFile.remove(2);
-    cout << "Después de eliminar el registro con ID 2:" << endl;
+    cout << "Despues de eliminar el registro con ID 2:" << endl;
     orderedRecords = avlFile.inorder();
     for (const auto& record : orderedRecords) {
+        cout << record.id << ": " << record.name << endl;
+    }
+
+    cout << "Buscando registros en el rango [1, 3]:" << endl;
+    vector<Record<int>> rangeResult = avlFile.rangeSearch(1, 3);
+    for (const auto& record : rangeResult) {
         cout << record.id << ": " << record.name << endl;
     }
 
