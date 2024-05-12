@@ -48,7 +48,7 @@ public:
         for (int i = 0; i < index[idx].size(); i++) {
             dataFile.seekg(index[idx][i] * sizeof(Registro<T>));
             Registro<T> temp;
-            dataFile.read(reinterpret_cast<char*>(&temp), sizeof(Registro<T>));
+            dataFile.read((char*) &temp, sizeof(Registro<T>));
             if (temp.key == key)
                 result.push_back(temp);
         }
@@ -58,16 +58,19 @@ public:
 
     vector<Registro<T>> rangeSearch(T beginKey, T endKey) {
         vector<Registro<T>> result;
+        int idx = findIndex(beginKey);
         ifstream dataFile(dataFileName, ios::binary);
         if (!dataFile) {
             cerr << "Error: No se pudo abrir el archivo de datos." << endl;
             return result;
         }
-        for (auto &idx : index) {
-            for (auto &key : idx) {
+        for (int i = idx; i < index.size(); i++) {
+            for (auto &key : index[i]) {
+                if (key > endKey)
+                    break;
                 dataFile.seekg(key * sizeof(Registro<T>));
                 Registro<T> temp;
-                dataFile.read(reinterpret_cast<char*>(&temp), sizeof(Registro<T>));
+                dataFile.read((char*) &temp, sizeof(Registro<T>));
                 if (temp.key >= beginKey && temp.key <= endKey)
                     result.push_back(temp);
             }
@@ -82,7 +85,7 @@ public:
             cerr << "Error: No se pudo abrir el archivo de datos." << endl;
             return false;
         }
-        dataFile.write(reinterpret_cast<char*>(&registro), sizeof(Registro<T>));
+        dataFile.write((char*) &registro, sizeof(Registro<T>));
         dataFile.close();
 
         // Leer el archivo y actualizar el índice
@@ -98,7 +101,7 @@ public:
 
         T key;
         long pos = 0;
-        while (dataReadFile.read(reinterpret_cast<char*>(&registro), sizeof(Registro<T>))) {
+        while (dataReadFile.read((char*) &registro, sizeof(Registro<T>))) {
             key = registro.key;
             index[0].push_back(pos);
             pos++;
@@ -152,9 +155,9 @@ public:
 
         Registro<T> temp;
         bool found = false;
-        while (dataFile.read(reinterpret_cast<char*>(&temp), sizeof(Registro<T>))) {
+        while (dataFile.read((char*) &temp, sizeof(Registro<T>))) {
             if (temp.key != key)
-                tempFile.write(reinterpret_cast<char*>(&temp), sizeof(Registro<T>));
+                tempFile.write((char*) &temp, sizeof(Registro<T>));
             else
                 found = true;
         }
@@ -183,7 +186,7 @@ public:
 
         T readKey;
         long pos = 0;
-        while (dataReadFile.read(reinterpret_cast<char*>(&temp), sizeof(Registro<T>))) {
+        while (dataReadFile.read((char*) &temp, sizeof(Registro<T>))) {
             readKey = temp.key;
             index[0].push_back(pos);
             pos++;
