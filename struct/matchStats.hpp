@@ -1,9 +1,11 @@
 #include <iostream>
 #include <cstring>
+#include <variant>
 
 using namespace std;
 
 struct MatchStats{
+    int key;
     int season;
     char date[10];
     char event[7];
@@ -42,7 +44,48 @@ struct MatchStats{
     char adc_red_team[15];
     char support_red_team[15];
 
-    MatchStats(string data){
+    MatchStats(string data, string k){
+        // Define key
+        if (k == "season") key = 0;
+        else if (k == "date") key = 1;
+        else if (k == "event") key = 2;
+        else if (k == "patch") key = 3;
+        else if (k == "blue_team") key = 4;
+        else if (k == "red_team") key = 5;
+        else if (k == "winner") key = 6;
+        else if (k == "ban_1_blue_team") key = 7;
+        else if (k == "ban_2_blue_team") key = 8;
+        else if (k == "ban_3_blue_team") key = 9;
+        else if (k == "ban_4_blue_team") key = 10;
+        else if (k == "ban_5_blue_team") key = 11;
+        else if (k == "ban_1_red_team") key = 12;
+        else if (k == "ban_2_red_team") key = 13;
+        else if (k == "ban_3_red_team") key = 14;
+        else if (k == "ban_4_red_team") key = 15;
+        else if (k == "ban_5_red_team") key = 16;
+        else if (k == "pick_1_blue_team") key = 17;
+        else if (k == "pick_2_blue_team") key = 18;
+        else if (k == "pick_3_blue_team") key = 19;
+        else if (k == "pick_4_blue_team") key = 20;
+        else if (k == "pick_5_blue_team") key = 21;
+        else if (k == "pick_1_red_team") key = 22;
+        else if (k == "pick_2_red_team") key = 23;
+        else if (k == "pick_3_red_team") key = 24;
+        else if (k == "pick_4_red_team") key = 25;
+        else if (k == "pick_5_red_team") key = 26;
+        else if (k == "top_blue_team") key = 27;
+        else if (k == "jungler_blue_team") key = 28;
+        else if (k == "mid_blue_team") key = 29;
+        else if (k == "bot_blue_team") key = 30;
+        else if (k == "support_blue_team") key = 31;
+        else if (k == "top_red_team") key = 32;
+        else if (k == "jungler_red_team") key = 33;
+        else if (k == "mid_red_team") key = 34;
+        else if (k == "bot_red_team") key = 35;
+        else if (k == "support_red_team") key = 36;
+        else key = -1;
+
+        // Parse data
         string temp = "";
         temp = data.substr(0, data.find(","));
         data = data.substr(data.find(",") + 1);
@@ -341,6 +384,87 @@ struct MatchStats{
             player[i] = temp[i];
         }
         strncpy(support_red_team, player, sizeof(support_red_team) - 1);
+    }
+
+    variant<int, float, string>getKey(){
+        switch (key) {
+            case 0:
+                return season;
+            case 1:
+                return date;
+            case 2:
+                return event;
+            case 3:
+                return patch;
+            case 4:
+                return blue_team;
+            case 5:
+                return red_team;
+            case 6:
+                return winner;
+            case 7:
+                return ban_1_blue_team;
+            case 8:
+                return ban_2_blue_team;
+            case 9:
+                return ban_3_blue_team;
+            case 10:
+                return ban_4_blue_team;
+            case 11:
+                return ban_5_blue_team;
+            case 12:
+                return ban_1_red_team;
+            case 13:
+                return ban_2_red_team;
+            case 14:
+                return ban_3_red_team;
+            case 15:
+                return ban_4_red_team;
+            case 16:
+                return ban_5_red_team;
+            case 17:
+                return pick_1_blue_team;
+            case 18:
+                return pick_2_blue_team;
+            case 19:
+                return pick_3_blue_team;
+            case 20:
+                return pick_4_blue_team;
+            case 21:
+                return pick_5_blue_team;
+            case 22:
+                return pick_1_red_team;
+            case 23:
+                return pick_2_red_team;
+            case 24:
+                return pick_3_red_team;
+            case 25:
+                return pick_4_red_team;
+            case 26:
+                return pick_5_red_team;
+            case 27:
+                return top_blue_team;
+            case 28:
+                return jungler_blue_team;
+            case 29:
+                return mid_blue_team;
+            case 30:
+                return adc_blue_team;
+            case 31:
+                return support_blue_team;
+            case 32:
+                return top_red_team;
+            case 33:
+                return jungler_red_team;
+            case 34:
+                return mid_red_team;
+            case 35:
+                return adc_red_team;
+            case 36:
+                return support_red_team;
+            default:
+                return -1;
+        }
     }
 
     void print(){

@@ -1,9 +1,11 @@
 #include <iostream>
 #include <cstring>
+#include <variant>
 
 using namespace std;
 
 struct ChampionStats{
+    int key;
     int season;
     char event[7];
     char champion[15];
@@ -29,7 +31,34 @@ struct ChampionStats{
     float killShare;
     float goldShare;
 
-    ChampionStats(string data){
+    ChampionStats(string data, string k){
+        
+        if (k == "season") key = 0;
+        else if (k == "event") key = 1;
+        else if (k == "champion") key = 2;
+        else if (k == "gamesContests") key = 3;
+        else if (k == "pickBanRatio") key = 4;
+        else if (k == "bannedGames") key = 5;
+        else if (k == "playedGames") key = 6;
+        else if (k == "playedByNumberOfPlayers") key = 7;
+        else if (k == "wins") key = 8;
+        else if (k == "losses") key = 9;
+        else if (k == "winRate") key = 10;
+        else if (k == "kills") key = 11;
+        else if (k == "deaths") key = 12;
+        else if (k == "assists") key = 13;
+        else if (k == "kdaRatio") key = 14;
+        else if (k == "CS") key = 15;
+        else if (k == "CSmin") key = 16;
+        else if (k == "gold") key = 17;
+        else if (k == "goldMin") key = 18;
+        else if (k == "damage") key = 19;
+        else if (k == "damageMin") key = 20;
+        else if (k == "KP") key = 21;
+        else if (k == "killShare") key = 22;
+        else if (k == "goldShare") key = 23;
+        else key = -1;
+
         string temp;
         temp = data.substr(0, data.find(","));
         data = data.substr(data.find(",") + 1);
@@ -41,7 +70,7 @@ struct ChampionStats{
         temp = data.substr(0, data.find(","));
         data = data.substr(data.find(",") + 1);
 
-        char e[10];
+        char e[10] = "";
         for (int i = 0; i < temp.size(); i++){
             e[i] = temp[i];
         }
@@ -49,7 +78,7 @@ struct ChampionStats{
         strncpy(event, e, sizeof(event) - 1);
         temp = data.substr(0, data.find(","));
         data = data.substr(data.find(",") + 1);
-        char c[15];
+        char c[15] = "";
 
         for (int i = 0; i < temp.size(); i++){
             c[i] = temp[i];
@@ -222,6 +251,61 @@ struct ChampionStats{
             goldShare = -1;
         } else {
             goldShare = stof(temp);
+        }
+    }
+
+    variant<int, float, string>getKey(){
+        switch (key){
+            case 0:
+                return season;
+            case 1:
+                return event;
+            case 2:
+                return champion;
+            case 3:
+                return gamesContests;
+            case 4:
+                return pickBanRatio;
+            case 5:
+                return bannedGames;
+            case 6:
+                return playedGames;
+            case 7:
+                return playedByNumberOfPlayers;
+            case 8:
+                return wins;
+            case 9:
+                return losses;
+            case 10:
+                return winRate;
+            case 11:
+                return kills;
+            case 12:
+                return deaths;
+            case 13:
+                return assists;
+            case 14:
+                return kdaRatio;
+            case 15:
+                return CS;
+            case 16:
+                return CSmin;
+            case 17:
+                return gold;
+            case 18:
+                return goldMin;
+            case 19:
+                return damage;
+            case 20:
+                return damageMin;
+            case 21:
+                return KP;
+            case 22:
+                return killShare;
+            case 23:
+                return goldShare;
+            default:
+                return -1;
         }
     }
 

@@ -1,9 +1,11 @@
 #include <iostream>
 #include <cstring>
+#include <variant>
 
 using namespace std;
 
 struct PlayerStats{
+    int key;
     int season;
     char event[7];
     char team[45];
@@ -26,7 +28,32 @@ struct PlayerStats{
     float kill_share;
     float gold_share;
 
-    PlayerStats(string data) {
+    PlayerStats(string data, string k) {
+        // set key
+        if (k == "season") key = 0;
+        else if (k == "event") key = 1;
+        else if (k == "team") key = 2;
+        else if (k == "player") key = 3;
+        else if (k == "games_played") key = 4;
+        else if (k == "wins") key = 5;
+        else if (k == "loses") key = 6;
+        else if (k == "win_rate") key = 7;
+        else if (k == "kills") key = 8;
+        else if (k == "deaths") key = 9;
+        else if (k == "assists") key = 10;
+        else if (k == "kill_death_assist_ratio") key = 11;
+        else if (k == "creep_score") key = 12;
+        else if (k == "cs_min") key = 13;
+        else if (k == "gold") key = 14;
+        else if (k == "gold_min") key = 15;
+        else if (k == "damage") key = 16;
+        else if (k == "damage_min") key = 17;
+        else if (k == "kill_participation") key = 18;
+        else if (k == "kill_share") key = 19;
+        else if (k == "gold_share") key = 20;
+        else key = -1;
+
+        // parse data
         string temp = "";
         temp = data.substr(0, data.find(","));
         data = data.substr(data.find(",") + 1);
@@ -195,6 +222,31 @@ struct PlayerStats{
         } else {
             gold_share = stof(temp);
         }
+    }
+
+    variant<int, float, string> getKey(){
+        if (key == 0) return season;
+        else if (key == 1) return event;
+        else if (key == 2) return team;
+        else if (key == 3) return player;
+        else if (key == 4) return games_played;
+        else if (key == 5) return wins;
+        else if (key == 6) return loses;
+        else if (key == 7) return win_rate;
+        else if (key == 8) return kills;
+        else if (key == 9) return deaths;
+        else if (key == 10) return assists;
+        else if (key == 11) return kill_death_assist_ratio;
+        else if (key == 12) return creep_score;
+        else if (key == 13) return cs_min;
+        else if (key == 14) return gold;
+        else if (key == 15) return gold_min;
+        else if (key == 16) return damage;
+        else if (key == 17) return damage_min;
+        else if (key == 18) return kill_participation;
+        else if (key == 19) return kill_share;
+        else if (key == 20) return gold_share;
+        else return -1;
     }
 
     void print(){
