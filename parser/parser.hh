@@ -18,8 +18,8 @@ using namespace std;
 
 class Token {
 public:
-  enum Type { ERR, END, SELECT, FROM, INSERT, VALUES, DELETE, STRING, IF, CREATE, TABLE, FILE, USING, STRUCT, INT, FLOAT, EQUAL, GREATER, LESSER, GREATEREQUAL, LESSEREQUAL, NOTEQUAL, AND, OR };
-  static const char* token_names[25];
+  enum Type { ERR, END, SELECT, FROM, INSERT, VALUES, DELETE, STRING, IF, CREATE, TABLE, FILE, USING, STRUCT, INT, FLOAT, EQUAL, GREATER, LESSER, GREATEREQUAL, LESSEREQUAL, NOTEQUAL, AND, OR, WHERE, ALL };
+  static const char* token_names[27];
   Type type;
   string lexema;
   Token(Type);

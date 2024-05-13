@@ -1,7 +1,7 @@
 #include "parser.hh"
 
 
-const char* Token::token_names[25] = { "ERR", "END", "SELECT", "FROM", "INSERT", "VALUES", "DELETE", "STRING", "IF", "CREATE", "TABLE", "FILE", "USING", "STRUCT", "INT", "FLOAT", "EQUAL", "GREATER", "LESSER", "GREATER EQUAL", "LESSER EQUAL", "NOT EQUAL", "AND", "OR" };
+const char* Token::token_names[27] = { "ERR", "END", "SELECT", "FROM", "INSERT", "VALUES", "DELETE", "STRING", "IF", "CREATE", "TABLE", "FILE", "USING", "STRUCT", "INT", "FLOAT", "EQUAL", "GREATER", "LESSER", "GREATER EQUAL", "LESSER EQUAL", "NOT EQUAL", "AND", "OR", "WHERE", "ALL" };
 
 Token::Token(Type type):type(type) { lexema = ""; }
 
@@ -37,6 +37,7 @@ Scanner::Scanner(const char* s):input(s),first(0), current(0) {
       reserved["ISAM"] = Token::STRUCT; 
       reserved["and"] = Token::AND;
       reserved["or"] = Token::OR;
+      reserved["where"] = Token::WHERE;
     }
 
 Token* Scanner::nextToken() {
@@ -70,7 +71,7 @@ Token* Scanner::nextToken() {
       token = new Token(ttype);
     else
       token = new Token(Token::STRING, getLexema()); 
-  } else if (strchr("!<>=", c)) {
+  } else if (strchr("!<>=*", c)) {
     switch(c) {
     case '=': token = new Token(Token::EQUAL); break;
     case '!': c = nextChar(); 
@@ -85,6 +86,7 @@ Token* Scanner::nextToken() {
       if (c == '=') token = new Token(Token::LESSEREQUAL);
       else token = new Token(Token::LESSER);
       break;
+    case '*' : token = new Token(Token::ALL, getLexema()); break;
     default: cout << "No deberia llegar aca" << endl;
     }
   } else {

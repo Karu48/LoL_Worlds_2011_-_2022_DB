@@ -3,7 +3,8 @@
 using namespace std;
 
 int main(){
-    string input = "select xd from table holi delete from tablita where xd = 1.0 and xd = 2.0";
+    string input;
+    getline(cin, input);
     Scanner scanner(input.c_str());
     Token* token;
     do {
