@@ -120,8 +120,8 @@ Token::Type Scanner::checkReserved(string lexema) {
   std::unordered_map<std::string,Token::Type>::const_iterator it = reserved.find (lexema);
   if (it == reserved.end())
     return Token::ERR;
- else
-   return it->second;
+  else
+    return it->second;
 }
 
 

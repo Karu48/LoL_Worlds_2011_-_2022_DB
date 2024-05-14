@@ -83,7 +83,7 @@ struct PlayerStats{
         data = data.substr(data.find(",") + 1);
         char p[15] = "";
         for (int i = 0; i < temp.size(); i++){
-            p[i] = p[i];
+            p[i] = temp[i];
         }
         strncpy(player, p, sizeof(player) - 1);
 
