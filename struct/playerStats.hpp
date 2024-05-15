@@ -1,11 +1,6 @@
-#include <iostream>
-#include <cstring>
-#include <variant>
+#include "register.hpp"
 
-using namespace std;
-
-struct PlayerStats{
-    int key;
+struct PlayerStats : public Register{
     int season;
     char event[7];
     char team[45];
