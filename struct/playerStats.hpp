@@ -1,6 +1,10 @@
-#include "register.hpp"
+#pragma once
+#include <iostream>
+#include <variant>
+#include <cstring>
 
-struct PlayerStats : public Register{
+struct PlayerStats{
+    int key;
     int season;
     char event[7];
     char team[45];
@@ -219,7 +223,7 @@ struct PlayerStats : public Register{
         }
     }
 
-    variant<int, float, string> getKey(){
+    variant<int, float, string> getKey() const {
         if (key == 0) return season;
         else if (key == 1) return event;
         else if (key == 2) return team;

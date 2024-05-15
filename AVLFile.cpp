@@ -1,37 +1,30 @@
-#include <iostream>
+#include "struct/matchStats.hpp"
+#include "struct/playerStats.hpp"
+#include "struct/championStats.hpp"
+#include "struct/register.hpp"
 #include <fstream>
 #include <vector>
 #include <algorithm>
 
-using namespace std;
-
-template<typename TK>
-struct Record {
-    TK id;
-    string name;
-};
-
-template<typename TK>
 struct AVLNode {
-    Record<TK> record;
+    Register registro;
     AVLNode* left;
     AVLNode* right;
     int height;
 
-    AVLNode(const Record<TK>& data){
-        record = data;
+    AVLNode(const Register& data){
+        registro = data;
         left = nullptr;
         right = nullptr;
         height = 1;
     }
 };
 
-template<typename TK>
 class AVLFile {
 private:
     string filename;
     long pos_root;
-    AVLNode<TK>* root;
+    AVLNode* root;
 
 public:
     AVLFile(string filename) : filename(filename), pos_root(0), root(nullptr) {
@@ -50,75 +43,77 @@ public:
         }
     }
 
-    Record<TK> find(TK key) {
-        AVLNode<TK>* node = findNode(root, key);
+    Register find(variant<int, float, string> key) {
+        AVLNode* node = findNode(root, key);
         if (node) {
-            return node->record;
+            return node->registro;
         } else {
             return {};
         }
     }
 
-    void insert(const Record<TK>& record) {
-        root = insertNode(root, record);
+    void insert(const Register& registro) {
+        root = insertNode(root, registro);
         writeNode(root, pos_root);
     }
 
-    void remove(TK key) {
+    void remove(variant<int, float, string> key) {
         root = deleteNode(root, key);
         writeNode(root, pos_root);
     }
 
-    vector<Record<TK>> inorder() {
-        vector<Record<TK>> records;
-        inorderTraversal(root, records);
-        return records;
+    vector<Register> inorder() {
+        vector<Register> registers;
+        inorderTraversal(root, registers);
+        return registers;
     }
 
-    AVLNode<TK>* getRoot() {
+    AVLNode* getRoot() {
         return root;
     }
 
-    vector<Record<TK>> rangeSearch(TK low, TK high) {
-        vector<Record<TK>> result;
+    vector<Register> rangeSearch(variant<int, float, string> low, variant<int, float, string> high) {
+        vector<Register> result;
         rangeSearchHelper(root, low, high, result);
         return result;
     }
 
 private:
-    AVLNode<TK>* findNode(AVLNode<TK>* node, TK key) {
+    AVLNode* findNode(AVLNode* node, variant<int, float, string> key) {
         if (node == nullptr)
             return nullptr;
 
-        if (key < node->record.id)
+        auto keyNode = visit([](auto&& arg){return arg.getKey();}, node->registro.data);
+
+        if (key < keyNode)
             return findNode(node->left, key);
-        else if (key > node->record.id)
+        else if (key > keyNode)
             return findNode(node->right, key);
         else
             return node;
     }
 
-    int height(AVLNode<TK>* node) {
+    int height(AVLNode* node) {
         if (node == nullptr)
             return 0;
         return node->height;
     }
 
-    int balanceFactor(AVLNode<TK>* node) {
+    int balanceFactor(AVLNode* node) {
         if (node == nullptr)
             return 0;
         return height(node->left) - height(node->right);
     }
 
-    void updateHeight(AVLNode<TK>* node) {
+    void updateHeight(AVLNode* node) {
         if (node == nullptr)
             return;
         node->height = 1 + max(height(node->left), height(node->right));
     }
 
-    AVLNode<TK>* rotateRight(AVLNode<TK>* y) {
-        AVLNode<TK>* x = y->left;
-        AVLNode<TK>* z = x->right;
+    AVLNode* rotateRight(AVLNode* y) {
+        AVLNode* x = y->left;
+        AVLNode* z = x->right;
 
         x->right = y;
         y->left = z;
@@ -129,9 +124,9 @@ private:
         return x;
     }
 
-    AVLNode<TK>* rotateLeft(AVLNode<TK>* x) {
-        AVLNode<TK>* y = x->right;
-        AVLNode<TK>* z = y->left;
+    AVLNode* rotateLeft(AVLNode* x) {
+        AVLNode* y = x->right;
+        AVLNode* z = y->left;
 
         y->left = x;
         x->right = z;
@@ -142,14 +137,18 @@ private:
         return y;
     }
 
-    AVLNode<TK>* insertNode(AVLNode<TK>* node, const Record<TK>& record) {
+    AVLNode* insertNode(AVLNode* node, const Register& registro) {
         if (node == nullptr)
-            return new AVLNode<TK>(record);
+            return new AVLNode(registro);
 
-        if (record.id < node->record.id)
-            node->left = insertNode(node->left, record);
-        else if (record.id > node->record.id)
-            node->right = insertNode(node->right, record);
+        auto keyNode = visit([](auto&& arg){return arg.getKey();}, node->registro.data);
+
+        auto keyRegistro = visit([](auto&& arg){return arg.getKey();}, registro.data);
+
+        if (keyRegistro < keyNode)
+            node->left = insertNode(node->left, registro);
+        else if (keyRegistro > keyNode)
+            node->right = insertNode(node->right, registro);
         else
             return node;
 
@@ -157,36 +156,57 @@ private:
 
         int balance = balanceFactor(node);
 
-        if (balance > 1 and record.id < node->left->record.id)
+/*
+        if (balance > 1 and registro.data.getKey() < node->left->registro.data.getKey())
             return rotateRight(node);
 
-        if (balance < -1 and record.id > node->right->record.id)
+        if (balance < -1 and registro.data.getKey() > node->right->registro.data.getKey())
             return rotateLeft(node);
 
-        if (balance > 1 and record.id > node->left->record.id) {
+        if (balance > 1 and registro.data.getKey() > node->left->registro.data.getKey()) {
             node->left = rotateLeft(node->left);
             return rotateRight(node);
         }
 
-        if (balance < -1 and record.id < node->right->record.id) {
+        if (balance < -1 and registro.data.getKey() < node->right->registro.data.getKey()) {
             node->right = rotateRight(node->right);
             return rotateLeft(node);
+        }
+*/
+        if (balance >= 2) {
+            if (balanceFactor(node->left) >= 0)
+                return rotateRight(node);
+            else {
+                node->left = rotateLeft(node->left);
+                return rotateRight(node);
+            }
+        }
+
+        if (balance <= -2) {
+            if (balanceFactor(node->right) <= 0)
+                return rotateLeft(node);
+            else {
+                node->right = rotateRight(node->right);
+                return rotateLeft(node);
+            }
         }
 
         return node;
     }
 
-    AVLNode<TK>* deleteNode(AVLNode<TK>* node, TK key) {
+    AVLNode* deleteNode(AVLNode* node, variant<int, float, string> key) {
         if (node == nullptr)
             return node;
 
-        if (key < node->record.id)
+        auto keyNode = visit([](auto&& arg){return arg.getKey();}, node->registro.data);
+
+        if (key < keyNode)
             node->left = deleteNode(node->left, key);
-        else if (key > node->record.id)
+        else if (key > keyNode)
             node->right = deleteNode(node->right, key);
         else {
             if (node->left == nullptr || node->right == nullptr) {
-                AVLNode<TK>* temp = node->left ? node->left : node->right;
+                AVLNode* temp = node->left ? node->left : node->right;
 
                 if (temp == nullptr) {
                     temp = node;
@@ -196,9 +216,10 @@ private:
 
                 delete temp;
             } else {
-                AVLNode<TK>* temp = minValueNode(node->right);
-                node->record = temp->record;
-                node->right = deleteNode(node->right, temp->record.id);
+                AVLNode* temp = minValueNode(node->right);
+                node->registro = temp->registro;
+                auto keytemp = visit([](auto&& arg){return arg.getKey();}, temp->registro.data);
+                node->right = deleteNode(node->right, keytemp);
             }
         }
 
@@ -228,8 +249,8 @@ private:
         return node;
     }
 
-    AVLNode<TK>* minValueNode(AVLNode<TK>* node) {
-        AVLNode<TK>* current = node;
+    AVLNode* minValueNode(AVLNode* node) {
+        AVLNode* current = node;
 
         while (current->left != nullptr)
             current = current->left;
@@ -237,30 +258,32 @@ private:
         return current;
     }
 
-    void inorderTraversal(AVLNode<TK>* node, vector<Record<TK>>& records) {
+    void inorderTraversal(AVLNode* node, vector<Register>& registers) {
         if (node == nullptr)
             return;
 
-        inorderTraversal(node->left, records);
-        records.push_back(node->record);
-        inorderTraversal(node->right, records);
+        inorderTraversal(node->left, registers);
+        registers.push_back(node->registro);
+        inorderTraversal(node->right, registers);
     }
 
-    void rangeSearchHelper(AVLNode<TK>* node, TK low, TK high, vector<Record<TK>>& result) {
+    void rangeSearchHelper(AVLNode* node, variant<int, float, string> low, variant<int, float, string> high, vector<Register>& result) {
         if (node == nullptr)
             return;
 
-        if (node->record.id > low)
+        auto keyNode = visit([](auto&& arg){return arg.getKey();}, node->registro.data);
+
+        if (keyNode > low)
             rangeSearchHelper(node->left, low, high, result);
 
-        if (node->record.id >= low && node->record.id <= high)
-            result.push_back(node->record);
+        if (keyNode >= low && keyNode <= high)
+            result.push_back(node->registro);
 
-        if (node->record.id < high)
+        if (keyNode < high)
             rangeSearchHelper(node->right, low, high, result);
     }
 
-    void writeNode(AVLNode<TK>* node, long& pos) {
+    void writeNode(AVLNode* node, long& pos) {
         ofstream file(filename, ios::binary | ios::trunc);
         if (!file.is_open()) {
             cerr << "Error: No se puede abrir el archivo para escribirlo." << endl;
@@ -275,7 +298,7 @@ private:
         }
 
         file.seekp(pos);
-        file.write((char*)node, sizeof(AVLNode<TK>));
+        file.write((char*)node, sizeof(AVLNode));
         pos = file.tellp();
 
         writeNode(node->left, pos);
@@ -286,36 +309,106 @@ private:
 };
 
 int main() {
-    AVLFile<int> avlFile("data.bin");
+    AVLFile avlFile("data.bin");
 
-    avlFile.insert({3, "Josue"});
-    avlFile.insert({2, "Ricardo"});
-    avlFile.insert({1, "Luis"});
+    string key = "playedGames";
 
-    Record<int> result = avlFile.find(2);
-    if (result.id != -1) {
-        cout << "Registro encontrado: " << result.id << ", " << result.name << endl;
-    } else {
-        cout << "Registro no encontrado." << endl;
-    }
+    string data = "4,Main,Thresh,63,80.8,19.0,44,15.0,24,20,54.5,0.8,3.34,9.84,3.18,31.27,0.88,8.4,237.0,,,68.1,5.1,14.3";
 
-    vector<Record<int>> orderedRecords = avlFile.inorder();
+    Register c1(data, key, "champion");
+
+    data = "4,Main,Kha'Zix,66,84.6,8.0,58,18.0,25,33,43.1,2.98,2.57,4.79,3.03,137.84,3.8,10.8,299.0,,,61.1,23.4,18.8";
+
+    Register c2(data, key, "champion");
+
+    data = "4,Main,Janna,53,67.9,8.0,45,14.0,28,17,62.2,0.33,2.11,11.13,5.43,19.87,0.55,9.2,255.0,,,73.5,2.1,15.3";
+
+    Register c3(data, key, "champion");
+
+    avlFile.insert(c1);
+    avlFile.insert(c2);
+    avlFile.insert(c3);
+
+    Register result = avlFile.find(45);
+
+    // Lo sagrado para imprimir
+    // auto variante = visit([result](){return result.data;});
+    // visit([](auto x){x.print();}, variante);
+
+    auto resultKey = visit([](auto&& arg){return arg.getKey();}, result.data);
+    auto name = std::visit([](auto&& arg) {
+        using T = std::decay_t<decltype(arg)>;
+        if constexpr (std::is_same_v<T, ChampionStats>) {
+            return arg.champion;  // Replace 'attribute1' with the actual attribute name
+        } else if constexpr (std::is_same_v<T, MatchStats>) {
+            return arg.event;  // Replace 'attribute2' with the actual attribute name
+        } else if constexpr (std::is_same_v<T, PlayerStats>) {
+            return arg.event;  // Replace 'attribute3' with the actual attribute name
+        }
+    }, result.data);
+
+    visit([&result](auto x){cout << "Registro encontrado: " << x << ", ";}, resultKey);
+    cout << name << endl;
+
+
+    vector<Register> orderedregisters = avlFile.inorder();
     cout << "Todos los registros ordenados:" << endl;
-    for (const auto& record : orderedRecords) {
-        cout << record.id << ": " << record.name << endl;
+    for (const auto& registro : orderedregisters) {
+        auto resultKey = visit([](auto&& arg){return arg.getKey();}, registro.data);
+        auto name = std::visit([](auto&& arg) {
+            using T = std::decay_t<decltype(arg)>;
+            if constexpr (std::is_same_v<T, ChampionStats>) {
+                return arg.champion;  // Replace 'attribute1' with the actual attribute name
+            } else if constexpr (std::is_same_v<T, MatchStats>) {
+                return arg.event;  // Replace 'attribute2' with the actual attribute name
+            } else if constexpr (std::is_same_v<T, PlayerStats>) {
+                return arg.event;  // Replace 'attribute3' with the actual attribute name
+            }
+        }, registro.data);
+
+        visit([&result](auto x){cout << "Registro encontrado: " << x << ", ";}, resultKey);
+        cout << name << endl;
     }
 
-    avlFile.remove(2);
-    cout << "Despues de eliminar el registro con ID 2:" << endl;
-    orderedRecords = avlFile.inorder();
-    for (const auto& record : orderedRecords) {
-        cout << record.id << ": " << record.name << endl;
+
+    avlFile.remove(45);
+    cout << "Despues de eliminar el registro con Key 45:" << endl;
+    orderedregisters = avlFile.inorder();
+    for (const auto& registro : orderedregisters) {
+        auto resultKey = visit([](auto&& arg){return arg.getKey();}, registro.data);
+        auto name = std::visit([](auto&& arg) {
+            using T = std::decay_t<decltype(arg)>;
+            if constexpr (std::is_same_v<T, ChampionStats>) {
+                return arg.champion;  // Replace 'attribute1' with the actual attribute name
+            } else if constexpr (std::is_same_v<T, MatchStats>) {
+                return arg.event;  // Replace 'attribute2' with the actual attribute name
+            } else if constexpr (std::is_same_v<T, PlayerStats>) {
+                return arg.event;  // Replace 'attribute3' with the actual attribute name
+            }
+        }, registro.data);
+
+        visit([&result](auto x){cout << "Registro encontrado: " << x << ", ";}, resultKey);
+        cout << name << endl;
     }
 
-    cout << "Buscando registros en el rango [1, 3]:" << endl;
-    vector<Record<int>> rangeResult = avlFile.rangeSearch(1, 3);
-    for (const auto& record : rangeResult) {
-        cout << record.id << ": " << record.name << endl;
+
+    cout << "Buscando registros en el rango [30, 50]:" << endl;
+    vector<Register> rangeResult = avlFile.rangeSearch(30, 50);
+    for (const auto& registro : rangeResult) {
+        auto resultKey = visit([](auto&& arg){return arg.getKey();}, registro.data);
+        auto name = std::visit([](auto&& arg) {
+            using T = std::decay_t<decltype(arg)>;
+            if constexpr (std::is_same_v<T, ChampionStats>) {
+                return arg.champion;  // Replace 'attribute1' with the actual attribute name
+            } else if constexpr (std::is_same_v<T, MatchStats>) {
+                return arg.event;  // Replace 'attribute2' with the actual attribute name
+            } else if constexpr (std::is_same_v<T, PlayerStats>) {
+                return arg.event;  // Replace 'attribute3' with the actual attribute name
+            }
+        }, registro.data);
+
+        visit([&result](auto x){cout << "Registro encontrado: " << x << ", ";}, resultKey);
+        cout << name << endl;
     }
 
     return 0;

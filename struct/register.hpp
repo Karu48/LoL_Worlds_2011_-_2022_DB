@@ -1,12 +1,24 @@
 #pragma once
-#include <iostream>
 #include <variant>
-#include <cstring>
+#include "championStats.hpp"
+#include "matchStats.hpp"
+#include "playerStats.hpp"
 
 using namespace std;
 
 struct Register {    
-    int key;
-    virtual variant<int, float, string> getKey() = 0;
-    virtual void print() = 0;
+    variant<ChampionStats, MatchStats, PlayerStats> data;
+
+    Register() : data(ChampionStats("", "")) {}
+
+    Register(string data, string k, string type) : data(ChampionStats(data, k)) {
+        if (type == "champion") this->data = ChampionStats(data, k);
+        else if (type == "match") {
+            MatchStats match(data, k);
+            this->data = match;
+        } else if (type == "player") {
+            PlayerStats player(data, k);
+            this->data = player;
+        }
+    }
 };

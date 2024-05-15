@@ -1,6 +1,12 @@
-#include "register.hpp"
+#pragma once
+#include <iostream>
+#include <variant>
+#include <cstring>
 
-struct MatchStats : public Register {
+using namespace std;
+
+struct MatchStats{
+    int key;
     int season;
     char date[10];
     char event[7];
@@ -381,7 +387,7 @@ struct MatchStats : public Register {
         strncpy(support_red_team, player, sizeof(support_red_team) - 1);
     }
 
-    variant<int, float, string>getKey(){
+    variant<int, float, string>getKey() const {
         switch (key) {
             case 0:
                 return season;
