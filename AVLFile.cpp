@@ -18,20 +18,34 @@ struct AVLNode {
         right = nullptr;
         height = 1;
     }
+
+    AVLNode() {
+        left = nullptr;
+        right = nullptr;
+        height = 1;
+    }
 };
 
 class AVLFile {
 private:
     string filename;
-    long pos_root;
+    long pos_root = 0;
     AVLNode* root;
 
 public:
     AVLFile(string filename) : filename(filename), pos_root(0), root(nullptr) {
         ifstream file(filename, ios::binary);
         if (file.is_open()) {
-            file.read((char*)&pos_root, sizeof(pos_root));
-            file.close();
+            file.seekg(0, ios::end);
+            if (file.tellg() != 0) {
+                file.read((char*)&pos_root, sizeof(pos_root));
+                file.close();
+            } else {
+                file.close();
+                ofstream writeFile(filename, ios::binary);
+                writeFile.write((char*)&pos_root, sizeof(pos_root));
+                writeFile.close();
+            }
         }
     }
 
@@ -290,21 +304,37 @@ private:
             exit(1);
         }
 
-        if (node == nullptr) {
-            file.seekp(pos);
-            pos = file.tellp();
-            file.close();
-            return;
-        }
+        if (node == nullptr) return;
 
         file.seekp(pos);
         file.write((char*)node, sizeof(AVLNode));
-        pos = file.tellp();
-
-        writeNode(node->left, pos);
-        writeNode(node->right, pos);
-
         file.close();
+    }
+
+    void writeRoot(long& pos) {
+        ofstream file(filename, ios::binary | ios::out);
+        if (!file.is_open()) {
+            cerr << "Error: No se puede abrir el archivo para escribirlo." << endl;
+            exit(1);
+        }
+        file.seekp(0, ios::beg);
+        file.write((char*)&pos, sizeof(pos));
+        file.close();
+    }
+
+    AVLNode readNode(long& pos) {
+        ifstream file(filename, ios::binary);
+        if (!file.is_open()) {
+            cerr << "Error: No se puede abrir el archivo para leerlo." << endl;
+            exit(1);
+        }
+
+        AVLNode node;
+        file.seekg(pos);
+        file.read((char*)&node, sizeof(AVLNode));
+        file.close();
+
+        return node;
     }
 };
 
@@ -396,19 +426,21 @@ int main() {
     vector<Register> rangeResult = avlFile.rangeSearch(30, 50);
     for (const auto& registro : rangeResult) {
         auto resultKey = visit([](auto&& arg){return arg.getKey();}, registro.data);
-        auto name = std::visit([](auto&& arg) {
-            using T = std::decay_t<decltype(arg)>;
-            if constexpr (std::is_same_v<T, ChampionStats>) {
-                return arg.champion;  // Replace 'attribute1' with the actual attribute name
-            } else if constexpr (std::is_same_v<T, MatchStats>) {
-                return arg.event;  // Replace 'attribute2' with the actual attribute name
-            } else if constexpr (std::is_same_v<T, PlayerStats>) {
-                return arg.event;  // Replace 'attribute3' with the actual attribute name
-            }
-        }, registro.data);
+        // auto name = std::visit([](auto&& arg) {
+        //     using T = std::decay_t<decltype(arg)>;
+        //     if constexpr (std::is_same_v<T, ChampionStats>) {
+        //         return arg.champion;  // Replace 'attribute1' with the actual attribute name
+        //     } else if constexpr (std::is_same_v<T, MatchStats>) {
+        //         return arg.event;  // Replace 'attribute2' with the actual attribute name
+        //     } else if constexpr (std::is_same_v<T, PlayerStats>) {
+        //         return arg.event;  // Replace 'attribute3' with the actual attribute name
+        //     }
+        // }, registro.data);
+
+        ChampionStats c = get<ChampionStats>(registro.data);
 
         visit([&result](auto x){cout << "Registro encontrado: " << x << ", ";}, resultKey);
-        cout << name << endl;
+        cout << c.champion << endl;
     }
 
     return 0;
