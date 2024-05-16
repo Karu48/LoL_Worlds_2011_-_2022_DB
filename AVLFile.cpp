@@ -29,12 +29,10 @@ struct AVLNode {
 class AVLFile {
 private:
     string filename;
-    long pos_root = 0;
-    AVLNode* root;
-
 public:
     AVLFile(string filename) : filename(filename), pos_root(0), root(nullptr) {
         ifstream file(filename, ios::binary);
+        int pos_root = 0;
         if (file.is_open()) {
             file.seekg(0, ios::end);
             if (file.tellg() != 0) {
@@ -49,16 +47,10 @@ public:
         }
     }
 
-    ~AVLFile() {
-        ofstream file(filename, ios::binary);
-        if (file.is_open()) {
-            file.write((char*)&pos_root, sizeof(pos_root));
-            file.close();
-        }
-    }
+    ~AVLFile() {}
 
     Register find(variant<int, float, string> key) {
-        AVLNode* node = findNode(root, key);
+        AVLNode node = findNode(readRoot(), key);
         if (node) {
             return node->registro;
         } else {
@@ -67,8 +59,7 @@ public:
     }
 
     void insert(const Register& registro) {
-        root = insertNode(root, registro);
-        writeNode(root, pos_root);
+        insertNode(read, registro);
     }
 
     void remove(variant<int, float, string> key) {
@@ -93,15 +84,18 @@ public:
     }
 
 private:
-    AVLNode* findNode(AVLNode* node, variant<int, float, string> key) {
-        if (node == nullptr)
+    AVLNode findNode(long node, variant<int, float, string> key) {
+        if (node == -1)
             return nullptr;
 
-        auto keyNode = visit([](auto&& arg){return arg.getKey();}, node->registro.data);
+        AVLNode nodeData = readNode(node);
+        auto keyNode = visit([](auto&& arg){return arg.getKey();}, nodeData->registro.data);
 
         if (key < keyNode)
+            if (node->left == nullptr) return nullptr;
             return findNode(node->left, key);
         else if (key > keyNode)
+            if (node->right == nullptr) return nullptr;
             return findNode(node->right, key);
         else
             return node;
@@ -311,17 +305,6 @@ private:
         file.close();
     }
 
-    void writeRoot(long& pos) {
-        ofstream file(filename, ios::binary | ios::out);
-        if (!file.is_open()) {
-            cerr << "Error: No se puede abrir el archivo para escribirlo." << endl;
-            exit(1);
-        }
-        file.seekp(0, ios::beg);
-        file.write((char*)&pos, sizeof(pos));
-        file.close();
-    }
-
     AVLNode readNode(long& pos) {
         ifstream file(filename, ios::binary);
         if (!file.is_open()) {
@@ -335,6 +318,32 @@ private:
         file.close();
 
         return node;
+    }
+
+    void writeRoot(long& pos) {
+        ofstream file(filename, ios::binary | ios::out);
+        if (!file.is_open()) {
+            cerr << "Error: No se puede abrir el archivo para escribirlo." << endl;
+            exit(1);
+        }
+        file.seekp(0, ios::beg);
+        file.write((char*)&pos, sizeof(pos));
+        file.close();
+    }
+
+    long readRoot() {
+        ifstream file(filename, ios::binary);
+        if (!file.is_open()) {
+            cerr << "Error: No se puede abrir el archivo para leerlo." << endl;
+            exit(1);
+        }
+
+        long pos;
+        file.seekg(0, ios::beg);
+        file.read((char*)&pos, sizeof(pos));
+        file.close();
+
+        return pos;
     }
 };
 
