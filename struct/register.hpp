@@ -11,7 +11,7 @@ struct Register {
 
     Register() : data(ChampionStats("", "")) {}
 
-    Register(string data, string k, string type) : data(ChampionStats(data, k)) {
+    Register(string data, string k, string type) : data(ChampionStats("", "")) {
         if (type == "champion") this->data = ChampionStats(data, k);
         else if (type == "match") {
             MatchStats match(data, k);

@@ -3,6 +3,8 @@
 #include <variant>
 #include <cstring>
 
+using namespace std;
+
 struct PlayerStats{
     int key;
     int season;

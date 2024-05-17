@@ -17,7 +17,7 @@ int main(){
 
     cout << "\n-------------------------------------------------------------\n";
 
-    data = "8,Main,Phong_V_c5-_a9-_Buffalo,BigKoro,6,2,4,33.3,3.33,2.67,3.0,2.38,346.67,9.85,15.1,430,,,67.9,35.7,24.4";
+    data = "11,Main,T1,Keria,14,10,4,71.4,0.57,1.21,8.57,7.53,27.07,0.87,7.7,248,3800.0,123.0,78.0,4.9,13.5";
     PlayerStats player(data, "player");
     player.print();
     visit([](auto x){cout << x << endl;}, player.getKey());
