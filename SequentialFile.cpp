@@ -4,33 +4,41 @@
 #include <cmath>
 
 vector<Register> insertionSort(vector<Register> registers){
-    vector<Register> sortedRegisters;
-    for(int i = 0; i < registers.size(); i++){
-        if(sortedRegisters.size() == 0){
-            sortedRegisters.push_back(registers[i]);
+    int i, j;
+    Register key;
+    int n = registers.size();
+    for (i = 1; i < n; i++){
+        key = registers[i];
+        j = i - 1;
+
+        auto a = visit([](auto&& arg){return arg.getKey();}, key.data);
+        auto b = visit([](auto&& arg){return arg.getKey();}, registers[j].data);
+
+        bool ij;
+        if (a.index() == 2){
+            string c = get<string>(a);
+            string d = get<string>(b);
+            ij = strcmp(c.c_str(), d.c_str()) < 0;
         }else{
-            for(int j = 0; j < sortedRegisters.size(); j++){
-                auto iKey = visit([](auto&& arg){return arg.getKey();}, registers[i].data);
-                auto jKey = visit([](auto&& arg){return arg.getKey();}, registers[j].data);
+            ij = a < b;
+        }
 
-                bool ij;
-
-                if (iKey.index() == 2){
-                    string a = get<string>(iKey);
-                    string b = get<string>(jKey);
-                    ij = strcmp(a.c_str(), b.c_str()) > 0;
+        while (j >= 0 && ij){
+            registers[j + 1] = registers[j];
+            j = j - 1;
+            if (j >= 0){
+                b = visit([](auto&& arg){return arg.getKey();}, registers[j].data);
+                if (registers[j].data.index() == 2){
+                    string c = get<string>(a);
+                    string d = get<string>(b);
+                    ij = strcmp(c.c_str(), d.c_str()) < 0;
                 }else{
-                    ij = iKey > jKey;
-                }
-
-                if(ij){
-                    sortedRegisters.insert(sortedRegisters.begin() + j, registers[i]);
-                    break;
+                    ij = a < b;
                 }
             }
         }
     }
-    return sortedRegisters;
+    return registers;
 }
 
 class SequentialFile {
@@ -66,6 +74,7 @@ class SequentialFile {
             for(int i = 0; i < Registers.size(); i++){
                 newFile.write((char*)&Registers[i], sizeof(Register));
             }
+            newFile.close();
             ofstream newAuxFile(this->auxFile, ios::out | ios::binary);
             newAuxFile.seekp(0, ios::beg);
             size = 0;
@@ -123,11 +132,11 @@ class SequentialFile {
             auxFile.read((char*)&size, sizeof(int));
             auxFile.close();
             ofstream writeFile(this->auxFile, ios::out | ios::binary);
+            writeFile.seekp(sizeof(int) + size * sizeof(Register), ios::beg);
+            writeFile.write((char*)&reg, sizeof(Register));
             size++;
             writeFile.seekp(0, ios::beg);
             writeFile.write((char*)&size, sizeof(int));
-            writeFile.seekp(0, ios::end);
-            writeFile.write((char*)&reg, sizeof(Register));
             writeFile.close();
             rebuild();
         }
@@ -165,7 +174,21 @@ class SequentialFile {
                     }
                 }
             }
-            return Register();
+            file.close();
+            ifstream auxFile(this->auxFile, ios::in | ios::binary);
+            int auxSize;
+            auxFile.read((char*)&auxSize, sizeof(int));
+            for (int i = 0; i < auxSize; i++){
+                Register reg;
+                auxFile.read((char*)&reg, sizeof(Register));
+                auto regKey = visit([](auto&& arg){return arg.getKey();}, reg.data);
+                if (regKey == key){
+                    return reg;
+                }
+            }
+            Register reg;
+            auxFile.close();
+            return reg;
         }
 
         vector<Register> searchRange(variant<int, float, string> key1, variant<int, float, string> key2){
@@ -334,17 +357,18 @@ class SequentialFile {
 int main(){
     SequentialFile file("file.dat");
     string data = "11,Main,T1,Faker,14,10,4,71.4,1.86,1.43,4.79,4.65,252.64,8.14,11.8,381,11200.0,360.0,56.7,15.9,20.8";
-    Register reg1(data, "player", "player");
+    Register reg1(data, "gold", "player");
     data = "11,Main,T1,Gumayusi,14,10,4,71.4,3.5,1.0,3.71,7.21,316.57,10.2,14.1,455,14600.0,471.0,61.6,29.9,24.9";
-    Register reg2(data, "player", "player");
+    Register reg2(data, "gold", "player");
     data = "11,Main,T1,Keria,14,10,4,71.4,0.57,1.21,8.57,7.53,27.07,0.87,7.7,248,3800.0,123.0,78.0,4.9,13.5";
-    Register reg3(data, "player", "player");
+    Register reg3(data, "gold", "player");
     file.insert(reg1);
     file.insert(reg2);
     file.insert(reg3);
-    Register reg = file.search("Gumayusi");
+    float key = 11.8;
+    Register reg = file.search(key);
+    cout << reg.data.index() << endl;
     PlayerStats player = get<PlayerStats>(reg.data);
     player.print();
     return 0;
-
 }

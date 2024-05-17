@@ -19,9 +19,9 @@ struct PlayerStats{
     int deaths;
     int assists;
     float kill_death_assist_ratio;
-    int creep_score;
+    float creep_score;
     float cs_min;
-    int gold;
+    float gold;
     float gold_min;
     int damage;
     float damage_min;
@@ -157,7 +157,7 @@ struct PlayerStats{
         if (temp == ""){
             creep_score = -1;
         } else {
-            creep_score = stoi(temp);
+            creep_score = stof(temp);
         }
 
         temp = data.substr(0, data.find(","));
@@ -173,7 +173,7 @@ struct PlayerStats{
         if (temp == ""){
             gold = -1;
         } else {
-            gold = stoi(temp);
+            gold = stof(temp);
         }
 
         temp = data.substr(0, data.find(","));
