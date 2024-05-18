@@ -8,6 +8,7 @@
 #include <bitset>
 #include <functional>
 #include <unordered_map>
+#include "../struct/register.hpp"
 
 using namespace std;
 
@@ -26,7 +27,7 @@ class ExtendibleHashing {
 
     //Constructor
 public:
-     ExtendibleHashing(string fileName, int globalDepthIn, int maxBucketSize, std::function<std::bitset<sizeof(int) * 8>(T)> hash){
+     ExtendibleHashing(string fileName, int globalDepthIn, int maxBucketSize, std::function<std::bitset<sizeof(int) * 8>(T)> hash) {
         this->fileName = fileName;
         this->globalDepth = globalDepthIn;
         this->maxBucketSize = maxBucketSize;
@@ -79,34 +80,27 @@ public:
                     for (int j = i; j < size - 1; j++) {
                         records[j] = records[j + 1];
                     }
-                    records[size - 1] = NULL;
                     size--;
-                    if (size == 0) {
-                        delete this;
-                    }
-                    break;
+                    return;
                 }
             }
+            cout << "Remove failed: Record not found" << endl;
         }
 
         void removePos(int pos) {
             for (int i = pos; i < size - 1; i++) {
                 records[i] = records[i + 1];
             }
-            records[size - 1] = NULL;
             size--;
-            if (size == 0) {
-                delete this;
-            }
         }
 
         T removeLast() {
-            auto record = records[size - 1];
-            records[size - 1] = NULL;
-            size--;
-            if (size == 0) {
-                delete this;
+            if (size == 0 || size - 1 < 0) {
+                cout << "Error: Bucket is empty" << endl;
+                exit(1);
             }
+            auto record = records[size - 1];
+            size--;
             return record;
         }
 
@@ -117,6 +111,27 @@ public:
                 }
             }
             return false;
+        }
+
+        bool containsByKey(variant<int, float, string> key) {
+            for (int i = 0; i < size; i++) {
+                auto r = visit([](auto &&arg) { return arg.getKey(); }, records[i].data);
+                if (r == key) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        T searchByKey(variant<int, float, string> key) {
+            for (int i = 0; i < size; i++) {
+                auto r = visit([](auto &&arg) { return arg.getKey(); }, records[i].data);
+                if (r == key) {
+                    return records[i];
+                }
+            }
+            cout << "Search failed: Record not found" << endl;
+            exit(1);
         }
 
         bool isFull() {
@@ -139,13 +154,30 @@ public:
         // Explore directory, load buckets and print them
         for (auto const &pair : directory) {
             auto *b = loadBucket(pair.second);
-            cout << "Bucket " << pair.first << ": ";
+            cout << "Bucket " << pair.first << "(" << pair.second << ")" << ": ";
             for (int j = 0; j < b->size; j++) {
-                cout << b->records[j] << " ";
-                while (b->next != -1) {
-                    cout << "-> ";
-                    b = loadBucket(b->next);
-                    cout << b->records[j] << " ";
+                auto r = visit([](auto &&arg) { return arg.getKey(); }, b->records[j].data);
+                if (r.index() == 0){
+                    cout << get<int>(r) << " ";
+                } else if (r.index() == 1){
+                    cout << get<float>(r) << " ";
+                } else {
+                    cout << get<string>(r) << " ";
+                }
+
+            }
+            while (b->next != -1) {
+                cout << "-> ";
+                b = loadBucket(b->next);
+                for (int j = 0; j < b->size; j++) {
+                    auto r = visit([](auto &&arg) { return arg.getKey(); }, b->records[j].data);
+                    if (r.index() == 0){
+                        cout << get<int>(r) << " ";
+                    } else if (r.index() == 1){
+                        cout << get<float>(r) << " ";
+                    } else {
+                        cout << get<string>(r) << " ";
+                    }
                 }
             }
             cout << endl;
@@ -157,7 +189,14 @@ public:
             auto *b = loadBucket(i);
             cout << "Bucket " << i << ": ";
             for (int j = 0; j < b->size; j++) {
-                cout << b->records[j] << " ";
+                auto r = visit([](auto &&arg) { return arg.getKey(); }, b->records[j].data);
+                if (r.index() == 0){
+                    cout << get<int>(r) << " ";
+                } else if (r.index() == 1){
+                    cout << get<float>(r) << " ";
+                } else {
+                    cout << get<string>(r) << " ";
+                }
             }
             cout << endl;
         }
@@ -165,8 +204,10 @@ public:
 
     void splitBucket(int depth, string key);
     void addOverflowBucket(int index);
+    void deleteItem(T record);
+    bool search(T record);
+    T searchByKey(variant<int, float, string> key, string keyType, string type);
 };
-
 
 
 

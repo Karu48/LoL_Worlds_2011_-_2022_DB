@@ -273,4 +273,32 @@ struct PlayerStats{
         cout << "Kill Share: " << kill_share << endl;
         cout << "Gold Share: " << gold_share << endl;
     }
+
+    bool operator==(const PlayerStats &other) const {
+        return season == other.season && strcmp(event, other.event) == 0 && strcmp(team, other.team) == 0 && strcmp(player, other.player) == 0 && games_played == other.games_played && wins == other.wins && loses == other.loses && win_rate == other.win_rate && kills == other.kills && deaths == other.deaths && assists == other.assists && kill_death_assist_ratio == other.kill_death_assist_ratio && creep_score == other.creep_score && cs_min == other.cs_min && gold == other.gold && gold_min == other.gold_min && damage == other.damage && damage_min == other.damage_min && kill_participation == other.kill_participation && kill_share == other.kill_share && gold_share == other.gold_share;
+    }
+
+    void setKey(variant<int, float, string> k){
+        if (key == 0) season = get<int>(k);
+        else if (key == 1) strncpy(event, get<string>(k).c_str(), sizeof(event) - 1);
+        else if (key == 2) strncpy(team, get<string>(k).c_str(), sizeof(team) - 1);
+        else if (key == 3) strncpy(player, get<string>(k).c_str(), sizeof(player) - 1);
+        else if (key == 4) games_played = get<int>(k);
+        else if (key == 5) wins = get<int>(k);
+        else if (key == 6) loses = get<int>(k);
+        else if (key == 7) win_rate = get<float>(k);
+        else if (key == 8) kills = get<int>(k);
+        else if (key == 9) deaths = get<int>(k);
+        else if (key == 10) assists = get<int>(k);
+        else if (key == 11) kill_death_assist_ratio = get<float>(k);
+        else if (key == 12) creep_score = get<float>(k);
+        else if (key == 13) cs_min = get<float>(k);
+        else if (key == 14) gold = get<float>(k);
+        else if (key == 15) gold_min = get<float>(k);
+        else if (key == 16) damage = get<int>(k);
+        else if (key == 17) damage_min = get<float>(k);
+        else if (key == 18) kill_participation = get<float>(k);
+        else if (key == 19) kill_share = get<float>(k);
+        else if (key == 20) gold_share = get<float>(k);
+    }
 };

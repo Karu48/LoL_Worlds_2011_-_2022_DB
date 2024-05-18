@@ -1,4 +1,4 @@
-#include "struct/register.hpp"
+#include "../struct/register.hpp"
 #include <fstream>
 #include <vector>
 #include <cmath>

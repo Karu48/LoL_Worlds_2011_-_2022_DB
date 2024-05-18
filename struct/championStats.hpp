@@ -336,5 +336,36 @@ struct ChampionStats{
         cout << "Kill Share: " << killShare << endl;
         cout << "Gold Share: " << goldShare << endl;
     }
+
+    bool operator==(const ChampionStats &c) const {
+        return key == c.key && season == c.season && strcmp(event, c.event) == 0 && strcmp(champion, c.champion) == 0 && gamesContests == c.gamesContests && pickBanRatio == c.pickBanRatio && bannedGames == c.bannedGames && playedGames == c.playedGames && playedByNumberOfPlayers == c.playedByNumberOfPlayers && wins == c.wins && losses == c.losses && winRate == c.winRate && kills == c.kills && deaths == c.deaths && assists == c.assists && kdaRatio == c.kdaRatio && CS == c.CS && CSmin == c.CSmin && gold == c.gold && goldMin == c.goldMin && damage == c.damage && damageMin == c.damageMin && KP == c.KP && killShare == c.killShare && goldShare == c.goldShare;
+    }
+
+    void setKey(variant<int, float, string> k){
+        if (key == 0) season = get<int>(k);
+        else if (key == 1) memcpy(event, get<string>(k).c_str(), sizeof(event) - 1);
+        else if (key == 2) memcpy(champion, get<string>(k).c_str(), sizeof(champion) - 1);
+        else if (key == 3) gamesContests = get<int>(k);
+        else if (key == 4) pickBanRatio = get<float>(k);
+        else if (key == 5) bannedGames = get<int>(k);
+        else if (key == 6) playedGames = get<int>(k);
+        else if (key == 7) playedByNumberOfPlayers = get<int>(k);
+        else if (key == 8) wins = get<int>(k);
+        else if (key == 9) losses = get<int>(k);
+        else if (key == 10) winRate = get<float>(k);
+        else if (key == 11) kills = get<int>(k);
+        else if (key == 12) deaths = get<int>(k);
+        else if (key == 13) assists = get<int>(k);
+        else if (key == 14) kdaRatio = get<float>(k);
+        else if (key == 15) CS = get<int>(k);
+        else if (key == 16) CSmin = get<float>(k);
+        else if (key == 17) gold = get<int>(k);
+        else if (key == 18) goldMin = get<float>(k);
+        else if (key == 19) damage = get<int>(k);
+        else if (key == 20) damageMin = get<float>(k);
+        else if (key == 21) KP = get<float>(k);
+        else if (key == 22) killShare = get<float>(k);
+        else if (key == 23) goldShare = get<float>(k);
+    }
 };
 

@@ -507,4 +507,48 @@ struct MatchStats{
         cout << "ADC Red Team: " << adc_red_team << endl;
         cout << "Support Red Team: " << support_red_team << endl;
     }
+
+    bool operator==(const MatchStats &other) const {
+        return key == other.key && season == other.season && strcmp(date, other.date) == 0 && strcmp(event, other.event) == 0 && patch == other.patch && strcmp(blue_team, other.blue_team) == 0 && strcmp(red_team, other.red_team) == 0 && strcmp(winner, other.winner) == 0 && strcmp(ban_1_blue_team, other.ban_1_blue_team) == 0 && strcmp(ban_2_blue_team, other.ban_2_blue_team) == 0 && strcmp(ban_3_blue_team, other.ban_3_blue_team) == 0 && strcmp(ban_4_blue_team, other.ban_4_blue_team) == 0 && strcmp(ban_5_blue_team, other.ban_5_blue_team) == 0 && strcmp(ban_1_red_team, other.ban_1_red_team) == 0 && strcmp(ban_2_red_team, other.ban_2_red_team) == 0 && strcmp(ban_3_red_team, other.ban_3_red_team) == 0 && strcmp(ban_4_red_team, other.ban_4_red_team) == 0 && strcmp(ban_5_red_team, other.ban_5_red_team) == 0 && strcmp(pick_1_blue_team, other.pick_1_blue_team) == 0 && strcmp(pick_2_blue_team, other.pick_2_blue_team) == 0 && strcmp(pick_3_blue_team, other.pick_3_blue_team) == 0 && strcmp(pick_4_blue_team, other.pick_4_blue_team) == 0 && strcmp(pick_5_blue_team, other.pick_5_blue_team) == 0 && strcmp(pick_1_red_team, other.pick_1_red_team) == 0 && strcmp(pick_2_red_team, other.pick_2_red_team) == 0 && strcmp(pick_3_red_team, other.pick_3_red_team) == 0 && strcmp(pick_4_red_team, other.pick_4_red_team) == 0 && strcmp(pick_5_red_team, other.pick_5_red_team) == 0 && strcmp(top_blue_team, other.top_blue_team) == 0 && strcmp(jungler_blue_team, other.jungler_blue_team) == 0 && strcmp(mid_blue_team, other.mid_blue_team) == 0 && strcmp(adc_blue_team, other.adc_blue_team) == 0 && strcmp(support_blue_team, other.support_blue_team) == 0 && strcmp(top_red_team, other.top_red_team) == 0 && strcmp(jungler_red_team, other.jungler_red_team) == 0 && strcmp(mid_red_team, other.mid_red_team) == 0 && strcmp(adc_red_team, other.adc_red_team) == 0 && strcmp(support_red_team, other.support_red_team) == 0;
+    }
+
+    void setKey(variant<int, float, string> k){
+        if (key == 0) season = get<int>(k);
+        else if (key == 1) strcpy(date, get<string>(k).c_str());
+        else if (key == 2) strcpy(event, get<string>(k).c_str());
+        else if (key == 3) patch = get<float>(k);
+        else if (key == 4) strcpy(blue_team, get<string>(k).c_str());
+        else if (key == 5) strcpy(red_team, get<string>(k).c_str());
+        else if (key == 6) strcpy(winner, get<string>(k).c_str());
+        else if (key == 7) strcpy(ban_1_blue_team, get<string>(k).c_str());
+        else if (key == 8) strcpy(ban_2_blue_team, get<string>(k).c_str());
+        else if (key == 9) strcpy(ban_3_blue_team, get<string>(k).c_str());
+        else if (key == 10) strcpy(ban_4_blue_team, get<string>(k).c_str());
+        else if (key == 11) strcpy(ban_5_blue_team, get<string>(k).c_str());
+        else if (key == 12) strcpy(ban_1_red_team, get<string>(k).c_str());
+        else if (key == 13) strcpy(ban_2_red_team, get<string>(k).c_str());
+        else if (key == 14) strcpy(ban_3_red_team, get<string>(k).c_str());
+        else if (key == 15) strcpy(ban_4_red_team, get<string>(k).c_str());
+        else if (key == 16) strcpy(ban_5_red_team, get<string>(k).c_str());
+        else if (key == 17) strcpy(pick_1_blue_team, get<string>(k).c_str());
+        else if (key == 18) strcpy(pick_2_blue_team, get<string>(k).c_str());
+        else if (key == 19) strcpy(pick_3_blue_team, get<string>(k).c_str());
+        else if (key == 20) strcpy(pick_4_blue_team, get<string>(k).c_str());
+        else if (key == 21) strcpy(pick_5_blue_team, get<string>(k).c_str());
+        else if (key == 22) strcpy(pick_1_red_team, get<string>(k).c_str());
+        else if (key == 23) strcpy(pick_2_red_team, get<string>(k).c_str());
+        else if (key == 24) strcpy(pick_3_red_team, get<string>(k).c_str());
+        else if (key == 25) strcpy(pick_4_red_team, get<string>(k).c_str());
+        else if (key == 26) strcpy(pick_5_red_team, get<string>(k).c_str());
+        else if (key == 27) strcpy(top_blue_team, get<string>(k).c_str());
+        else if (key == 28) strcpy(jungler_blue_team, get<string>(k).c_str());
+        else if (key == 29) strcpy(mid_blue_team, get<string>(k).c_str());
+        else if (key == 30) strcpy(adc_blue_team, get<string>(k).c_str());
+        else if (key == 31) strcpy(support_blue_team, get<string>(k).c_str());
+        else if (key == 32) strcpy(top_red_team, get<string>(k).c_str());
+        else if (key == 33) strcpy(jungler_red_team, get<string>(k).c_str());
+        else if (key == 34) strcpy(mid_red_team, get<string>(k).c_str());
+        else if (key == 35) strcpy(adc_red_team, get<string>(k).c_str());
+        else if (key == 36) strcpy(support_red_team, get<string>(k).c_str());
+    }
 };
