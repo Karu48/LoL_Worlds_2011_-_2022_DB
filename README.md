@@ -58,7 +58,6 @@
 ## **Apéndices**
 
 - **Código Fuente**:
-  - [Repositorio del proyecto](https://github.com/Karu48/LoL_Worlds_2011_-_2022_DB)
 
 - **Documentación Adicional**:
-  - Enlaces a documentación de soporte, datos adicionales y recursos utilizados.
+  - [Documentacion de rapidcsv](https://github.com/d99kris/rapidcsv)
