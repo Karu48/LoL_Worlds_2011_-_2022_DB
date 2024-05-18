@@ -88,7 +88,7 @@ class SequentialFile {
             this->auxFile = "aux_" + filename;
             ifstream file(this->filename, ios::in | ios::binary);
             file.seekg(0, ios::end);
-            if (file.tellg() == -1){
+            if (file.tellg() <= 0){
                 ofstream file(this->filename, ios::out | ios::binary);
                 int size = 0;
                 file.write((char*)&size, sizeof(int));
@@ -96,7 +96,7 @@ class SequentialFile {
             }
             ifstream auxFile(this->auxFile, ios::in | ios::binary);
             auxFile.seekg(0, ios::end);
-            if (auxFile.tellg() == -1){
+            if (auxFile.tellg() <= 0){
                 ofstream auxFile(this->auxFile, ios::out | ios::binary);
                 int size = 0;
                 auxFile.write((char*)&size, sizeof(int));
@@ -301,18 +301,23 @@ class SequentialFile {
                 file.read((char*)&reg, sizeof(Register));
                 auto regKey = visit([](auto&& arg){return arg.getKey();}, reg.data);
                 if (regKey == key){
-                    file.seekg(sizeof(int) + (size - 1) * sizeof(Register), ios::beg);
-                    Register r;
-                    file.read((char*)&r, sizeof(Register));
                     file.close();
-                    ofstream writeFile(this->filename, ios::out | ios::binary);
-                    writeFile.seekp(sizeof(int) + mid * sizeof(Register), ios::beg);
-                    writeFile.write((char*)&r, sizeof(Register));
+                    fstream file(this->filename, ios::in | ios::out | ios::binary);
+
+                    for (int i = mid+1; i < size; i++){
+                        file.seekg(sizeof(int) + i * sizeof(Register), ios::beg);
+                        Register r;
+                        file.read((char*)&r, sizeof(Register));
+                        file.seekp(sizeof(int) + (i - 1) * sizeof(Register), ios::beg);
+                        file.write((char*)&r, sizeof(Register));
+                    }
+
                     size--;
-                    writeFile.seekp(0, ios::beg);
-                    writeFile.write((char*)&size, sizeof(int));
-                    writeFile.close();
+                    file.seekp(0, ios::beg);
+                    file.write((char*)&size, sizeof(int));
+                    file.close();
                     return;
+                    
                 } else {
                     if (regKey.index() == 2) {
                         string a = get<string>(key);
