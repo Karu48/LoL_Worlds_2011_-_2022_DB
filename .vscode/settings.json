@@ -1,8 +1,15 @@
 {
     "files.associations": {
+<<<<<<< HEAD
         "iostream": "cpp",
         "functional": "cpp",
         "filesystem": "cpp",
         "iosfwd": "cpp"
+=======
+        "*.embeddedhtml": "html",
+        "variant": "cpp",
+        "iostream": "cpp",
+        "*.tcc": "cpp"
+>>>>>>> 245f51265a59bc297ce7d46a102ff09e6120d724
     }
 }
