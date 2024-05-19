@@ -170,8 +170,8 @@ Por otro lado, en la búsqueda por rango se calculan los valores hash para los l
 
 | Cantidad de Datos | Tiempo de Ejecución | Read | Write |
 | --- | --- | --- | --- |
-| 100 | 2ms | 50 | 200 |
-| 500 | 49ms | 100 | 400 |
+| 10 | 2ms | 50 | 200 |
+| 100 | 49ms | 100 | 400 |
 | 1000 | 486ms | 500 | 1500 |
 
 ### Extendible Hashing
