@@ -1,29 +1,30 @@
 #include "struct/register.hpp"
+#include "ExtendibleHashing/ExtendibleHashing.h"
 #include <fstream>
-#include "SequentialFile/SequentialFile.hpp"
 #include <chrono>
 
 using namespace std;
 using namespace std::chrono;
 
 void testInsercion(string filename, int numRegistros) {
-    fstream file("data/championStats.csv", ios::in);
+    fstream file("data/playerStats.csv", ios::in);
     string line;
     getline(file, line);
 
-    SequentialFile sf(filename);
+    ExtendibleHashing<Register> eh(filename, 6, 3, CustomHash);
 
-    auto start = high_resolution_clock::now(); 
+    auto start = high_resolution_clock::now();
     int diskAccesses = 0;
 
     for (int i = 0; i < numRegistros; i++) {
         getline(file, line);
-        Register r(line, "champion", "champion");
-        sf.insert(r);
-        diskAccesses += 2;
+        Register r(line, "player", "player");
+
+        eh.insert(r);
+        diskAccesses += 1;
     }
 
-    auto stop = high_resolution_clock::now(); 
+    auto stop = high_resolution_clock::now();
     auto duration = duration_cast<milliseconds>(stop - start);
 
     cout << "Metricas de insercion para " << numRegistros << " registros:" << endl;
@@ -31,45 +32,17 @@ void testInsercion(string filename, int numRegistros) {
     cout << "Tiempo total de ejecucion en milisegundos: " << duration.count() << " ms" << endl;
 }
 
-void testBusqueda(string filename, variant<int, float, string> key) {
-    SequentialFile sf(filename);
-
-    auto start = high_resolution_clock::now(); 
-    int diskAccesses = 0;
-    
-    sf.search(key);
-    diskAccesses += 1; 
-
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<milliseconds>(stop - start);
-
-    cout << "Metricas de busqueda para la clave ";
-    
-    if (holds_alternative<int>(key)) {
-        cout << get<int>(key);
-    } else if (holds_alternative<float>(key)) {
-        cout << get<float>(key);
-    } else if (holds_alternative<string>(key)) {
-        cout << get<string>(key);
-    } else {
-        cout << "Tipo de clave no reconocido";
-    }
-
-    cout << ":" << endl;
-    cout << "Total de accesos al disco duro: " << diskAccesses << endl;
-    cout << "Tiempo total de ejecucion en milisegundos: " << duration.count() << " ms" << endl;
-}
 
 int main() {
-    string filename = "seq1000.dat";
+    string filename10 = "t1000.dat";
+    string filename500 = "t500.dat";
+    string filename1000 = "t100.dat";
 
-    testInsercion(filename, 1000);
+    testInsercion(filename1000, 1000);
 
-    testInsercion(filename, 100);
+    testInsercion(filename500, 500);
 
-    testInsercion(filename, 100);
-
-    testBusqueda(filename, "clave_busqueda");
+    testInsercion(filename10, 100);
 
     return 0;
 }
