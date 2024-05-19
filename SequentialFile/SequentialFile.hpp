@@ -386,52 +386,52 @@ class SequentialFile {
         }
 };
 
-int main(){
-    SequentialFile file("file.dat");
-    string data = "11,Main,T1,Faker,14,10,4,71.4,1.86,1.43,4.79,4.65,252.64,8.14,11.8,381,11200.0,360.0,56.7,15.9,20.8";
-    Register reg1(data, "gold", "player");
-    data = "11,Main,T1,Gumayusi,14,10,4,71.4,3.5,1.0,3.71,7.21,316.57,10.2,14.1,455,14600.0,471.0,61.6,29.9,24.9";
-    Register reg2(data, "gold", "player");
-    data = "11,Main,T1,Keria,14,10,4,71.4,0.57,1.21,8.57,7.53,27.07,0.87,7.7,248,3800.0,123.0,78.0,4.9,13.5";
-    Register reg3(data, "gold", "player");
-    file.insert(reg1);
-    file.insert(reg2);
-    file.insert(reg3);
+// int main(){
+//     SequentialFile file("file.dat");
+//     string data = "11,Main,T1,Faker,14,10,4,71.4,1.86,1.43,4.79,4.65,252.64,8.14,11.8,381,11200.0,360.0,56.7,15.9,20.8";
+//     Register reg1(data, "gold", "player");
+//     data = "11,Main,T1,Gumayusi,14,10,4,71.4,3.5,1.0,3.71,7.21,316.57,10.2,14.1,455,14600.0,471.0,61.6,29.9,24.9";
+//     Register reg2(data, "gold", "player");
+//     data = "11,Main,T1,Keria,14,10,4,71.4,0.57,1.21,8.57,7.53,27.07,0.87,7.7,248,3800.0,123.0,78.0,4.9,13.5";
+//     Register reg3(data, "gold", "player");
+//     file.insert(reg1);
+//     file.insert(reg2);
+//     file.insert(reg3);
 
-    vector<Register> registers = file.getRegisters();
-    cout << "Insertion: \n\n";
-    for (int i = 0; i < registers.size(); i++){
-        Register reg = registers[i];
-        PlayerStats player = get<PlayerStats>(reg.data);
-        player.print();
-        cout << endl;
-    }
+//     vector<Register> registers = file.getRegisters();
+//     cout << "Insertion: \n\n";
+//     for (int i = 0; i < registers.size(); i++){
+//         Register reg = registers[i];
+//         PlayerStats player = get<PlayerStats>(reg.data);
+//         player.print();
+//         cout << endl;
+//     }
 
-    float key = 11.8;
-    Register reg = file.search(key);
-    PlayerStats player = get<PlayerStats>(reg.data);
-    cout << "Search: \n\n";
-    player.print();
-    cout << endl;
-    float x = 7;
-    float y = 12;
-    registers = file.searchRange(x, y);
-    cout << "Range search: \n\n";
-    for (int i = 0; i < registers.size(); i++){
-        Register reg = registers[i];
-        PlayerStats player = get<PlayerStats>(reg.data);
-        player.print();
-        cout << endl;
-    }
+//     float key = 11.8;
+//     Register reg = file.search(key);
+//     PlayerStats player = get<PlayerStats>(reg.data);
+//     cout << "Search: \n\n";
+//     player.print();
+//     cout << endl;
+//     float x = 7;
+//     float y = 12;
+//     registers = file.searchRange(x, y);
+//     cout << "Range search: \n\n";
+//     for (int i = 0; i < registers.size(); i++){
+//         Register reg = registers[i];
+//         PlayerStats player = get<PlayerStats>(reg.data);
+//         player.print();
+//         cout << endl;
+//     }
 
-    file.remove(key);
-    registers = file.getRegisters();
-    cout << "Remove: \n\n";
-    for (int i = 0; i < registers.size(); i++){
-        Register reg = registers[i];
-        PlayerStats player = get<PlayerStats>(reg.data);
-        player.print();
-        cout << endl;
-    }
-    return 0;
-}
+//     file.remove(key);
+//     registers = file.getRegisters();
+//     cout << "Remove: \n\n";
+//     for (int i = 0; i < registers.size(); i++){
+//         Register reg = registers[i];
+//         PlayerStats player = get<PlayerStats>(reg.data);
+//         player.print();
+//         cout << endl;
+//     }
+//     return 0;
+// }

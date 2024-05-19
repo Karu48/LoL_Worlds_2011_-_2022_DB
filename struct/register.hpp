@@ -12,7 +12,10 @@ struct Register {
     Register() : data(ChampionStats("", "")) {}
 
     Register(string data, string k, string type) : data(ChampionStats("", "")) {
-        if (type == "champion") this->data = ChampionStats(data, k);
+        if (type == "champion") {
+            ChampionStats champ(data, k);
+            this->data = champ;
+        }
         else if (type == "match") {
             MatchStats match(data, k);
             this->data = match;
@@ -41,5 +44,18 @@ struct Register {
             data = player;
         }
 
+    }
+
+    void print(){
+        if (data.index() == 0) {
+            ChampionStats champ = get<ChampionStats>(data);
+            champ.print();
+        } else if (data.index() == 1) {
+            MatchStats match = get<MatchStats>(data);
+            match.print();
+        } else if (data.index() == 2) {
+            PlayerStats player = get<PlayerStats>(data);
+            player.print();
+        }
     }
 };
