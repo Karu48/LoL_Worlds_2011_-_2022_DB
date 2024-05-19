@@ -301,4 +301,27 @@ struct PlayerStats{
         else if (key == 19) kill_share = get<float>(k);
         else if (key == 20) gold_share = get<float>(k);
     }
+
+    // Getters for each attribute
+    int getSeason() const { return season; }
+    string getEvent() const { return event; }
+    string getTeam() const { return team; }
+    string getPlayer() const { return player; }
+    int getGamesPlayed() const { return games_played; }
+    int getWins() const { return wins; }
+    int getLoses() const { return loses; }
+    float getWinRate() const { return win_rate; }
+    int getKills() const { return kills; }
+    int getDeaths() const { return deaths; }
+    int getAssists() const { return assists; }
+    float getKillDeathAssistRatio() const { return kill_death_assist_ratio; }
+    float getCreepScore() const { return creep_score; }
+    float getCSMin() const { return cs_min; }
+    float getGold() const { return gold; }
+    float getGoldMin() const { return gold_min; }
+    int getDamage() const { return damage; }
+    float getDamageMin() const { return damage_min; }
+    float getKillParticipation() const { return kill_participation; }
+    float getKillShare() const { return kill_share; }
+    float getGoldShare() const { return gold_share; }
 };

@@ -551,4 +551,154 @@ struct MatchStats{
         else if (key == 35) strcpy(adc_red_team, get<string>(k).c_str());
         else if (key == 36) strcpy(support_red_team, get<string>(k).c_str());
     }
+
+    // Getters for each attribute
+
+    int getSeason() const {
+        return season;
+    }
+
+    string getDate() const {
+        return date;
+    }
+
+    string getEvent() const {
+        return event;
+    }
+
+    float getPatch() const {
+        return patch;
+    }
+
+    string getBlueTeam() const {
+        return blue_team;
+    }
+
+    string getRedTeam() const {
+        return red_team;
+    }
+
+    string getWinner() const {
+        return winner;
+    }
+
+    string getBan1BlueTeam() const {
+        return ban_1_blue_team;
+    }
+
+    string getBan2BlueTeam() const {
+        return ban_2_blue_team;
+    }
+
+    string getBan3BlueTeam() const {
+        return ban_3_blue_team;
+    }
+
+    string getBan4BlueTeam() const {
+        return ban_4_blue_team;
+    }
+
+    string getBan5BlueTeam() const {
+        return ban_5_blue_team;
+    }
+
+    string getBan1RedTeam() const {
+        return ban_1_red_team;
+    }
+
+    string getBan2RedTeam() const {
+        return ban_2_red_team;
+    }
+
+    string getBan3RedTeam() const {
+        return ban_3_red_team;
+    }
+
+    string getBan4RedTeam() const {
+        return ban_4_red_team;
+    }
+
+    string getBan5RedTeam() const {
+        return ban_5_red_team;
+    }
+
+    string getPick1BlueTeam() const {
+        return pick_1_blue_team;
+    }
+
+    string getPick2BlueTeam() const {
+        return pick_2_blue_team;
+    }
+
+    string getPick3BlueTeam() const {
+        return pick_3_blue_team;
+    }
+
+    string getPick4BlueTeam() const {
+        return pick_4_blue_team;
+    }
+
+    string getPick5BlueTeam() const {
+        return pick_5_blue_team;
+    }
+
+    string getPick1RedTeam() const {
+        return pick_1_red_team;
+    }
+
+    string getPick2RedTeam() const {
+        return pick_2_red_team;
+    }
+
+    string getPick3RedTeam() const {
+        return pick_3_red_team;
+    }
+
+    string getPick4RedTeam() const {
+        return pick_4_red_team;
+    }
+
+    string getPick5RedTeam() const {
+        return pick_5_red_team;
+    }
+
+    string getTopBlueTeam() const {
+        return top_blue_team;
+    }
+
+    string getJunglerBlueTeam() const {
+        return jungler_blue_team;
+    }
+
+    string getMidBlueTeam() const {
+        return mid_blue_team;
+    }
+
+    string getAdcBlueTeam() const {
+        return adc_blue_team;
+    }
+
+    string getSupportBlueTeam() const {
+        return support_blue_team;
+    }
+
+    string getTopRedTeam() const {
+        return top_red_team;
+    }
+
+    string getJunglerRedTeam() const {
+        return jungler_red_team;
+    }
+
+    string getMidRedTeam() const {
+        return mid_red_team;
+    }
+
+    string getAdcRedTeam() const {
+        return adc_red_team;
+    }
+
+    string getSupportRedTeam() const {
+        return support_red_team;
+    }
 };

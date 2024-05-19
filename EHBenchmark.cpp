@@ -1,49 +1,75 @@
-#include "ExtendibleHashing/ExtendibleHashing.h"
+#include "struct/register.hpp"
+#include <fstream>
+#include "SequentialFile/SequentialFile.hpp"
+#include <chrono>
 
-void test10(){
-    fstream file("data/playerStats.csv", ios::in);
+using namespace std;
+using namespace std::chrono;
+
+void testInsercion(string filename, int numRegistros) {
+    fstream file("data/championStats.csv", ios::in);
     string line;
     getline(file, line);
-    ExtendibleHashing<Register> eh("t10.dat", 6, 3, CustomHash);
-    for (int i = 0; i < 10; i++){
+
+    SequentialFile sf(filename);
+
+    auto start = high_resolution_clock::now(); 
+    int diskAccesses = 0;
+
+    for (int i = 0; i < numRegistros; i++) {
         getline(file, line);
-        Register r(line, "player", "player");
-        eh.insert(r);
+        Register r(line, "champion", "champion");
+        sf.insert(r);
+        diskAccesses += 2;
     }
-    // eh.printAllBucketsFromDir();
+
+    auto stop = high_resolution_clock::now(); 
+    auto duration = duration_cast<milliseconds>(stop - start);
+
+    cout << "Metricas de insercion para " << numRegistros << " registros:" << endl;
+    cout << "Total de accesos al disco duro: " << diskAccesses << endl;
+    cout << "Tiempo total de ejecucion en milisegundos: " << duration.count() << " ms" << endl;
 }
 
-void test100(){
-    fstream file("data/playerStats.csv", ios::in);
-    string line;
-    getline(file, line);
-    ExtendibleHashing<Register> eh("t100.dat", 6, 3, CustomHash);
-    for (int i = 0; i < 100; i++){
-        getline(file, line);
-        Register r(line, "player", "player");
-        eh.insert(r);
-    }
-    // eh.printAllBucketsFromDir();
-}
+void testBusqueda(string filename, variant<int, float, string> key) {
+    SequentialFile sf(filename);
 
-void test1000(){
-    fstream file("data/playerStats.csv", ios::in);
-    string line;
-    getline(file, line);
-    ExtendibleHashing<Register> eh("t1000.dat", 6, 3, CustomHash);
-    for (int i = 0; i < 1000; i++){
-        getline(file, line);
-        Register r(line, "player", "player");
-        eh.insert(r);
-    }
-    // eh.printAllBucketsFromDir();
-}
-
-int main(){
-    test10();
-
-    test100();
+    auto start = high_resolution_clock::now(); 
+    int diskAccesses = 0;
     
-    test1000();
+    sf.search(key);
+    diskAccesses += 1; 
+
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<milliseconds>(stop - start);
+
+    cout << "Metricas de busqueda para la clave ";
+    
+    if (holds_alternative<int>(key)) {
+        cout << get<int>(key);
+    } else if (holds_alternative<float>(key)) {
+        cout << get<float>(key);
+    } else if (holds_alternative<string>(key)) {
+        cout << get<string>(key);
+    } else {
+        cout << "Tipo de clave no reconocido";
+    }
+
+    cout << ":" << endl;
+    cout << "Total de accesos al disco duro: " << diskAccesses << endl;
+    cout << "Tiempo total de ejecucion en milisegundos: " << duration.count() << " ms" << endl;
+}
+
+int main() {
+    string filename = "seq1000.dat";
+
+    testInsercion(filename, 1000);
+
+    testInsercion(filename, 100);
+
+    testInsercion(filename, 100);
+
+    testBusqueda(filename, "clave_busqueda");
+
     return 0;
 }

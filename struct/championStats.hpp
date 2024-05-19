@@ -367,5 +367,102 @@ struct ChampionStats{
         else if (key == 22) killShare = get<float>(k);
         else if (key == 23) goldShare = get<float>(k);
     }
+
+    // Getters for each attribute
+    int getSeason() const {
+        return season;
+    }
+
+    string getEvent() const {
+        return event;
+    }
+
+    string getChampion() const {
+        return champion;
+    }
+
+    int getGamesContests() const {
+        return gamesContests;
+    }
+
+    float getPickBanRatio() const {
+        return pickBanRatio;
+    }
+
+    int getBannedGames() const {
+        return bannedGames;
+    }
+
+    int getPlayedGames() const {
+        return playedGames;
+    }
+
+    int getPlayedByNumberOfPlayers() const {
+        return playedByNumberOfPlayers;
+    }
+
+    int getWins() const {
+        return wins;
+    }
+
+    int getLosses() const {
+        return losses;
+    }
+
+    float getWinRate() const {
+        return winRate;
+    }
+
+    int getKills() const {
+        return kills;
+    }
+
+    int getDeaths() const {
+        return deaths;
+    }
+
+    int getAssists() const {
+        return assists;
+    }
+
+    float getKdaRatio() const {
+        return kdaRatio;
+    }
+
+    int getCS() const {
+        return CS;
+    }
+
+    float getCSmin() const {
+        return CSmin;
+    }
+
+    int getGold() const {
+        return gold;
+    }
+
+    float getGoldMin() const {
+        return goldMin;
+    }
+
+    int getDamage() const {
+        return damage;
+    }
+
+    float getDamageMin() const {
+        return damageMin;
+    }
+
+    float getKP() const {
+        return KP;
+    }
+
+    float getKillShare() const {
+        return killShare;
+    }
+
+    float getGoldShare() const {
+        return goldShare;
+    }
 };
 
