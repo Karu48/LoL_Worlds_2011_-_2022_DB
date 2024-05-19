@@ -1,60 +1,78 @@
 #include "struct/register.hpp"
 #include <fstream>
 #include "SequentialFile/SequentialFile.hpp"
+#include <chrono>
 
-void test10(){
+using namespace std;
+using namespace std::chrono;
+
+void testInsercion(string filename, int numRegistros) {
     fstream file("data/championStats.csv", ios::in);
     string line;
     getline(file, line);
-    SequentialFile sf("seq10.dat");
-    for (int i = 0; i < 10; i++){
+
+    SequentialFile sf(filename);
+
+    auto start = high_resolution_clock::now();
+    int diskAccesses = 0;
+
+    for (int i = 0; i < numRegistros; i++) {
         getline(file, line);
         Register r(line, "champion", "champion");
         sf.insert(r);
+        diskAccesses += 2;
     }
-    // vector<Register> x = sf.getRegisters();
-    // for (auto a : x){
-    //     a.print();
-    // }
+
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<milliseconds>(stop - start);
+
+    cout << "Metricas de insercion para " << numRegistros << " registros:" << endl;
+    cout << "Total de accesos al disco duro: " << diskAccesses << endl;
+    cout << "Tiempo total de ejecucion en milisegundos: " << duration.count() << " ms" << endl;
 }
 
-void test100(){
-    fstream file("data/championStats.csv", ios::in);
-    string line;
-    getline(file, line);
-    SequentialFile sf("seq100.dat");
-    for (int i = 0; i < 100; i++){
-        getline(file, line);
-        Register r(line, "champion", "champion");
-        sf.insert(r);
+void testBusqueda(string filename, variant<int, float, string> key) {
+    SequentialFile sf(filename);
+
+    auto start = high_resolution_clock::now();
+    int diskAccesses = 0;
+
+    sf.search(key);
+    diskAccesses += 1;
+
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<milliseconds>(stop - start);
+
+    cout << "Metricas de busqueda para la clave ";
+
+    if (holds_alternative<int>(key)) {
+        cout << get<int>(key);
+    } else if (holds_alternative<float>(key)) {
+        cout << get<float>(key);
+    } else if (holds_alternative<string>(key)) {
+        cout << get<string>(key);
+    } else {
+        cout << "Tipo de clave no reconocido";
     }
-    // vector<Register> x = sf.getRegisters();
-    // for (auto a : x){
-    //     a.print();
-    // }
+
+    cout << ":" << endl;
+    cout << "Total de accesos al disco duro: " << diskAccesses << endl;
+    cout << "Tiempo total de ejecucion en milisegundos: " << duration.count() << " ms" << endl;
 }
 
-void test1000(){
-    fstream file("data/championStats.csv", ios::in);
-    string line;
-    getline(file, line);
-    SequentialFile sf("seq1000.dat");
-    for (int i = 0; i < 1000; i++){
-        getline(file, line);
-        Register r(line, "champion", "champion");
-        sf.insert(r);
-    }
-    // vector<Register> x = sf.getRegisters();
-    // for (auto a : x){
-    //     a.print();
-    // }
-}
+int main() {
+    string filename1000 = "seq1000.dat";
+    string filename500 = "seq500.dat";
+    string filename100 = "seq100.dat";
 
-int main(){
-    test10();
+    testInsercion(filename1000, 1000);
 
-    test100();
+    testInsercion(filename500, 500);
 
-    test1000();
+    testInsercion(filename100, 100);
+
+    string key = "Nunu";
+    testBusqueda(filename1000, key);
+
     return 0;
 }
