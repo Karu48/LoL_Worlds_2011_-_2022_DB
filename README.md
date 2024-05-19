@@ -162,24 +162,24 @@ Por otro lado, en la búsqueda por rango se calculan los valores hash para los l
 
 | Cantidad de Datos | Tiempo de Ejecución | Accessos |
 | --- | --- | --- |
-| 10 | 82ms | 100 |
-| 100 | 544ms | 1000 |
+| 100 | 82ms | 100 |
+| 500 | 544ms | 1000 |
 | 1000 | 1319ms | 2000 |
 
 **ISAM** 
 
 | Cantidad de Datos | Tiempo de Ejecución | Read | Write |
 | --- | --- | --- | --- |
-| 10 | 2ms | 50 | 200 |
-| 100 | 49ms | 100 | 400 |
+| 100 | 2ms | 50 | 200 |
+| 500 | 49ms | 100 | 400 |
 | 1000 | 486ms | 500 | 1500 |
 
 ### Extendible Hashing
 
 | Cantidad de Datos | Tiempo de Ejecución | Accessos |
 | --- | --- | --- |
-| 10 | 196ms | 100 |
-| 100 | 1309ms | 500 |
+| 100 | 196ms | 100 |
+| 500 | 1309ms | 500 |
 | 1000 | 24194ms | 1000 |
 
 ![Untitled](Informe%20Base%20de%20Datos%20League%20of%20Legends%20fb0fa57b5ba34ce197342302b234b783/Untitled%203.png)
