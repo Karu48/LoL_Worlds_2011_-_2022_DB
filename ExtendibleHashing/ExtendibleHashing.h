@@ -13,6 +13,12 @@
 
 using namespace std;
 
+bitset<sizeof(int) * 8> CustomHash(Register record) {
+        auto key = visit([](auto&& arg) { return arg.getKey(); }, record.data);
+        int x = 0;
+        memcpy(&x, &key, sizeof(int));
+        return bitset<sizeof(int) * 8>(x % 9);
+    }
 
 template<class T>
 class ExtendibleHashing {
@@ -28,11 +34,11 @@ class ExtendibleHashing {
 
     //Constructor
 public:
-     ExtendibleHashing(string fileName, int globalDepthIn, int maxBucketSize, std::function<std::bitset<sizeof(int) * 8>(T)> hash) {
+     ExtendibleHashing(string fileName) {
         this->fileName = fileName;
-        this->globalDepth = globalDepthIn;
-        this->maxBucketSize = maxBucketSize;
-        this->hash = hash;
+        this->globalDepth = 9;
+        this->maxBucketSize = 3;
+        this->hash = CustomHash;
 
         // Initialize first two buckets (0 and 1)
         auto *bucket0 = new Bucket();
@@ -74,6 +80,12 @@ public:
             // We'll do it in the insert function of ExtendibleHashing.
             // If it's full, we'll split the bucket.
         }
+
+        // void remove(variant<int, float, string> key, string keyType, string type){
+        //     Register tempRecord = Register("", "", "");
+        //     tempRecord.setKey(key, type, keyType);
+            
+        // }
 
         void remove(T record) {
             for (int i = 0; i < size; i++) {
@@ -209,13 +221,6 @@ public:
     bool search(T record);
     T searchByKey(variant<int, float, string> key, string keyType, string type);
 };
-
-bitset<sizeof(int) * 8> CustomHash(Register record) {
-        auto key = visit([](auto&& arg) { return arg.getKey(); }, record.data);
-        int x = 0;
-        memcpy(&x, &key, sizeof(int));
-        return bitset<sizeof(int) * 8>(x % 9);
-    }
 
 template<typename T>
 int ExtendibleHashing<T>::maxBucketSize = 3; // Initialize with a default value
