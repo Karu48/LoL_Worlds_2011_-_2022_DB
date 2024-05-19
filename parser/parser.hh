@@ -97,9 +97,9 @@ Token* Scanner::nextToken() {
       token = new Token(Token::INT, getLexema());
     }
     
-  } else if (isalpha(c)) {
+  } else if (isalpha(c) || c == '_' || c == ',' || c == '.' || c == '/') { 
     c = nextChar();
-    while (isalpha(c) || isdigit(c) || c=='_' || c==',' || c=='.') c = nextChar();
+    while (isalpha(c) || isdigit(c) || c=='_' || c==',' || c=='.' || c == '/') c = nextChar();
     rollBack();
     string lex = getLexema();
     Token::Type ttype = checkReserved(lex);
@@ -186,6 +186,7 @@ void create(string name, string file, string structure, string index, string key
     ISAM filex(name + ".dat");
     filex.loadCSV(file);
   }
+  cout << "Tabla creada" << endl;
 }
 
 void insert(string table, string values, TableFile tables){
@@ -203,6 +204,7 @@ void insert(string table, string values, TableFile tables){
     Record r(values, t.key, t.type);
     file.insert(r);
   }
+  cout << "Registro insertado" << endl;
 }
 
 void select(string values, string table, TableFile tables){
@@ -258,6 +260,7 @@ void remove(string table, string condition, string op, variant<int, float, strin
     // ISAM solo funciona para enteros
     file.remove(key);
   }
+  cout << "Registro eliminado" << endl;
 }
 
 void solve(Scanner scanner, TableFile tables){
@@ -295,6 +298,7 @@ void solve(Scanner scanner, TableFile tables){
     token = scanner.nextToken();
     if (token->type != Token::STRING) return;
     string key = token->lexema;
+    cout << name << " " << file << " " << structure << " " << index << " " << key << endl;
     create(name, file, structure, index, key, tables);
   }
 
