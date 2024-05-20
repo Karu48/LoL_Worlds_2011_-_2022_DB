@@ -4,6 +4,10 @@
 
 [https://github.com/Karu48/LoL_Worlds_2011_-_2022_DB](https://github.com/Karu48/LoL_Worlds_2011_-_2022_DB)
 
+**Link del video:**
+
+[https://drive.google.com/file/d/1Wd8U342pbfS7GZUKgYZzmtIkTxS74c_n/view?usp=sharing](https://drive.google.com/file/d/1Wd8U342pbfS7GZUKgYZzmtIkTxS74c_n/view?usp=sharing)
+
 **En formato pdf en la repo**
 
 ## Introducción
